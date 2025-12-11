@@ -1,0 +1,40 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use App\Models\Brand;
+use App\Models\Category;
+use App\Models\Allergen;
+use App\Models\Product;
+
+class DatabaseSeeder extends Seeder
+{
+    public function run(): void
+    {
+        // 1. Tworzymy pulę 50 Marek
+        $brands = Brand::factory(50)->create();
+
+        // 2. Tworzymy pulę 100 Kategorii
+        $categories = Category::factory(100)->create();
+
+        // 3. Tworzymy pulę 50 Alergenów
+        $allergens = Allergen::factory(50)->create();
+
+        // 4. Tworzymy 1000 Produktów KORZYSTAJĄC Z PULI
+        // Ważne: Używamy metody recycle(), która mówi Laravelowi:
+        // "Jeśli potrzebujesz marki lub kategorii, weź jedną z tych, które już stworzyłem, nie rób nowych!"
+
+        Product::factory(1000)
+            ->recycle($brands)      // Użyj istniejących marek
+            ->recycle($categories)  // Użyj istniejących kategorii
+            ->create();             // Stwórz produkty
+
+        // 5. Przypisujemy alergeny (to pozostaje bez zmian)
+        Product::all()->each(function ($product) use ($allergens) {
+            $product->allergens()->attach(
+                $allergens->random(rand(0, 3))->pluck('id')->toArray()
+            );
+        });
+    }
+}
