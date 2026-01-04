@@ -3,8 +3,13 @@
 @section('content')
     <div style="display: flex; justify-content: space-between; align-items: center;">
         <h1>Lista Produktów</h1>
-        <a href="{{ route('products.create') }}" class="btn" style="background: #28a745; color: white;">Dodaj nowy
-            produkt</a>
+        
+        {{-- Przycisk Dodawania: Tylko dla Admina/Pracownika --}}
+        @auth
+            @if(Auth::user()->role === 'admin' || Auth::user()->role === 'employee')
+                <a href="{{ route('products.create') }}" class="btn" style="background: #28a745; color: white;">Dodaj nowy produkt</a>
+            @endif
+        @endauth
     </div>
 
     <table>
@@ -16,13 +21,25 @@
                 <th>Marka</th>
                 <th>Kategoria</th>
                 <th>Alergeny</th>
-                <th>Akcje</th>
+                
+                {{-- Nagłówek Akcji: Tylko dla Admina/Pracownika --}}
+                @auth
+                    @if(Auth::user()->role === 'admin' || Auth::user()->role === 'employee')
+                        <th>Akcje</th>
+                    @endif
+                @endauth
             </tr>
         </thead>
         <tbody>
             @foreach($products as $product)
-                <tr>
-                    <td>{{ $product->name }}</td>
+                {{-- Dodajemy link do szczegółów produktu po kliknięciu w wiersz (opcjonalne) --}}
+                <tr style="cursor: pointer;" onclick="window.location='{{ route('products.show', $product) }}'">
+                    <td>
+                        {{-- Link do podglądu --}}
+                        <a href="{{ route('products.show', $product) }}" style="text-decoration: none; color: inherit; font-weight: bold;">
+                            {{ $product->name }}
+                        </a>
+                    </td>
                     <td>{{ number_format($product->price, 2) }} PLN</td>
                     <td>{{ $product->kcal_per_100g }}</td>
                     <td>{{ $product->brand->name }} <small
@@ -32,23 +49,17 @@
                         @foreach($product->allergens as $allergen)
                             @php
                                 // Logika kolorów
-                                $color = '#6c757d'; // domyślny szary
+                                $color = '#6c757d'; 
                                 $textColor = 'white';
 
                                 switch ($allergen->severity) {
-                                    case 'low':
-                                        $color = '#28a745'; // Zielony
+                                    case 'low': $color = '#28a745'; break;
+                                    case 'medium': 
+                                        $color = '#ffc107'; 
+                                        $textColor = 'black'; 
                                         break;
-                                    case 'medium':
-                                        $color = '#ffc107'; // Żółty/Pomarańczowy
-                                        $textColor = 'black';
-                                        break;
-                                    case 'high':
-                                        $color = '#dc3545'; // Czerwony
-                                        break;
-                                    case 'deadly':
-                                        $color = '#080008ff'; // Fioletowy
-                                        break;
+                                    case 'high': $color = '#dc3545'; break;
+                                    case 'deadly': $color = '#800080'; break; // Poprawiłem hex na standardowy fiolet
                                 }
                             @endphp
                             <span
@@ -57,15 +68,22 @@
                             </span>
                         @endforeach
                     </td>
-                    <td>
-                        <a href="{{ route('products.edit', $product) }}" class="btn">Edytuj</a>
-                        <form action="{{ route('products.destroy', $product) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-red"
-                                onclick="return confirm('Czy na pewno usunąć?')">Usuń</button>
-                        </form>
-                    </td>
+                    
+                    {{-- Przyciski Akcji: Tylko dla Admina/Pracownika --}}
+                    @auth
+                        @if(Auth::user()->role === 'admin' || Auth::user()->role === 'employee')
+                            {{-- onclick stopPropagation zapobiega przejściu do szczegółów przy kliknięciu w przycisk --}}
+                            <td onclick="event.stopPropagation();">
+                                <a href="{{ route('products.edit', $product) }}" class="btn">Edytuj</a>
+                                <form action="{{ route('products.destroy', $product) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-red"
+                                        onclick="return confirm('Czy na pewno usunąć?')">Usuń</button>
+                                </form>
+                            </td>
+                        @endif
+                    @endauth
                 </tr>
             @endforeach
         </tbody>
