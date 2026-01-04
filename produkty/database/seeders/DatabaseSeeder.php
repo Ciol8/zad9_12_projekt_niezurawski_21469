@@ -12,6 +12,30 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // 1. Tworzymy Administratora
+        \App\Models\User::factory()->create([
+            'name' => 'Admin Główny',
+            'email' => 'admin@sklep.pl',
+            'password' => bcrypt('password'), // Hasło: password
+            'role' => 'admin',
+        ]);
+
+        // 2. Tworzymy Pracownika
+        \App\Models\User::factory()->create([
+            'name' => 'Jan Pracownik',
+            'email' => 'pracownik@sklep.pl',
+            'password' => bcrypt('password'),
+            'role' => 'employee',
+        ]);
+
+        // 3. Tworzymy Klienta
+        \App\Models\User::factory()->create([
+            'name' => 'Anna Klientka',
+            'email' => 'klient@sklep.pl',
+            'password' => bcrypt('password'),
+            'role' => 'client',
+        ]);
+
         // 1. Tworzymy pulę 50 Marek
         $brands = Brand::factory(50)->create();
 
