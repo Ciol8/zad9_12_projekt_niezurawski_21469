@@ -196,19 +196,41 @@
 </head>
 
 <body>
-    <div style="text-align: right; margin-bottom: 10px;">
-    @auth
-        Witaj, {{ Auth::user()->name }} |
-        <form method="POST" action="{{ route('logout') }}" style="display:inline;">
-            @csrf
-            <button type="submit" style="background:none; border:none; color:blue; cursor:pointer; text-decoration:underline;">Wyloguj</button>
-        </form>
-    @else
-        <a href="{{ route('login') }}">Zaloguj</a>
-    @endauth
-    
-    | <a href="{{ route('cart.index') }}" style="font-weight: bold;">🛒 Twój Koszyk</a>
-</div>
+    <nav style="background: #333; color: white; padding: 10px; margin-bottom: 20px;">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; background: none; box-shadow: none; border: none; color: white;">
+        
+        <div>
+            <a href="{{ route('products.index') }}" style="color: white; text-decoration: none; font-weight: bold; margin-right: 15px;">SKLEP</a>
+            
+            @auth
+                {{-- Linki dla Pracownika i Admina --}}
+                @if(Auth::user()->role === 'admin' || Auth::user()->role === 'employee')
+                    <a href="{{ route('admin.orders.index') }}" style="color: #ffc107; margin-right: 15px;">[Panel Zamówień]</a>
+                @endif
+
+                {{-- Linki tylko dla Admina --}}
+                @if(Auth::user()->role === 'admin')
+                    <a href="{{ route('admin.users.index') }}" style="color: #ff9999; margin-right: 15px;">[Użytkownicy]</a>
+                @endif
+            @endauth
+        </div>
+
+        <div>
+            {{-- Prawa strona: Koszyk i Konto --}}
+            <a href="{{ route('cart.index') }}" style="color: white; margin-right: 15px;">🛒 Koszyk</a>
+            
+            @auth
+                <span>{{ Auth::user()->name }} ({{ Auth::user()->role }})</span>
+                <form method="POST" action="{{ route('logout') }}" style="display:inline; margin-left: 10px;">
+                    @csrf
+                    <button type="submit" style="background: #555; color: white; border: none; padding: 5px 10px; cursor: pointer;">Wyloguj</button>
+                </form>
+            @else
+                <a href="{{ route('login') }}" style="color: white;">Zaloguj</a>
+            @endauth
+        </div>
+    </div>
+</nav>
     <div class="container">
         {{-- Flash messages --}}
         @if(session('success'))

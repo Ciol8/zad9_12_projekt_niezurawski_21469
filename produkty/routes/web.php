@@ -55,5 +55,24 @@ Route::middleware(['auth', 'role:employee'])->group(function () {
 
     // Tutaj w przyszłości dodasz zarządzanie zamówieniami (Orders)
 });
+/*
+|--------------------------------------------------------------------------
+| PANEL ADMINISTRACYJNY I PRACOWNICZY
+|--------------------------------------------------------------------------
+*/
 
+// 1. ZARZĄDZANIE UŻYTKOWNIKAMI (Tylko Admin)
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin/users', [App\Http\Controllers\AdminUserController::class, 'index'])->name('admin.users.index');
+    Route::patch('/admin/users/{user}/role', [App\Http\Controllers\AdminUserController::class, 'updateRole'])->name('admin.users.updateRole');
+    Route::delete('/admin/users/{user}', [App\Http\Controllers\AdminUserController::class, 'destroy'])->name('admin.users.destroy');
+});
+
+// 2. ZARZĄDZANIE ZAMÓWIENIAMI (Admin + Pracownik)
+// Używamy role:employee, bo nasza logika w middleware puszcza też Admina
+Route::middleware(['auth', 'role:employee'])->group(function () {
+    Route::get('/admin/orders', [App\Http\Controllers\AdminOrderController::class, 'index'])->name('admin.orders.index');
+    Route::get('/admin/orders/{order}', [App\Http\Controllers\AdminOrderController::class, 'show'])->name('admin.orders.show');
+    Route::patch('/admin/orders/{order}/status', [App\Http\Controllers\AdminOrderController::class, 'updateStatus'])->name('admin.orders.updateStatus');
+});
 require __DIR__ . '/auth.php';

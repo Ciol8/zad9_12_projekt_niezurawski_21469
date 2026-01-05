@@ -90,20 +90,10 @@ class CartController extends Controller
     }
 
     // 4. Finalizacja zamówienia (Zapis do bazy)
+    // 4. Finalizacja zamówienia (Zapis do bazy)
     public function checkout(Request $request)
     {
-        if (!Auth::check())
-            return redirect()->route('login');
-
-        // Łączymy pola adresu w jeden string do bazy
-        $fullAddress = sprintf(
-            "%s, %s %s, %s",
-            $request->input('street'),
-            $request->input('zip'),
-            $request->input('city'),
-            $request->input('phone')
-        );
-        // Musi być zalogowany (Middleware to załatwi, ale sprawdzamy dla pewności)
+        // Musi być zalogowany
         if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'Musisz się zalogować, aby złożyć zamówienie.');
         }
@@ -114,22 +104,29 @@ class CartController extends Controller
             return redirect()->back()->with('error', 'Twój koszyk jest pusty.');
         }
 
-        // DB::transaction zapewnia, że albo wykonają się wszystkie zapytania, albo żadne
-        // (np. nie stworzy się puste zamówienie jeśli wystąpi błąd przy produktach)
+        // Łączymy pola adresu w jeden string
+        $fullAddress = sprintf(
+            "%s, %s %s, %s",
+            $request->input('street'),
+            $request->input('zip'),
+            $request->input('city'),
+            $request->input('phone')
+        );
+
         try {
+            // WAŻNE: Przekazujemy $fullAddress do środka transakcji używając 'use'
             DB::transaction(function () use ($cart, $fullAddress) {
                 $user = Auth::user();
                 $totalPrice = 0;
 
                 // 1. Tworzymy nagłówek zamówienia
-                // Pobieramy status "Nowe" (lub tworzymy jeśli nie istnieje)
                 $status = OrderStatus::firstOrCreate(['name' => 'Nowe']);
 
                 $order = Order::create([
                     'user_id' => $user->id,
                     'order_status_id' => $status->id,
-                    'total_price' => 0, // Zaktualizujemy za chwilę
-                    'shipping_address' => $fullAddress->input('address', 'Adres domyślny klienta'), // Uproszczenie
+                    'total_price' => 0,
+                    'shipping_address' => $fullAddress, // <--- TUTAJ BYŁ BŁĄD. Przypisujemy wprost zmienną string.
                 ]);
 
                 // 2. Tworzymy pozycje zamówienia
@@ -137,7 +134,7 @@ class CartController extends Controller
 
                 foreach ($productsInDb as $product) {
                     $quantity = $cart[$product->id];
-                    $price = $product->price; // Cena w momencie zakupu!
+                    $price = $product->price;
 
                     OrderItem::create([
                         'order_id' => $order->id,
@@ -155,9 +152,11 @@ class CartController extends Controller
                 // 4. Czyścimy koszyk
                 session()->forget('cart');
             });
-            return redirect()->route('products.index')->with('success', 'Zamówienie złożone!');
+
+            return redirect()->route('products.index')->with('success', 'Zamówienie zostało złożone pomyślnie!');
+
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with('error', 'Wystąpił błąd: ' . $e->getMessage());
         }
     }
 }
