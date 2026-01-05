@@ -14,22 +14,28 @@
 
     <table>
         <thead>
-            <tr>
-                <th>Nazwa Produktu</th>
-                <th>Cena</th>
-                <th>Kcal / 100g</th>
-                <th>Marka</th>
-                <th>Kategoria</th>
-                <th>Alergeny</th>
-                
-                {{-- Nagłówek Akcji: Tylko dla Admina/Pracownika --}}
-                @auth
-                    @if(Auth::user()->role === 'admin' || Auth::user()->role === 'employee')
-                        <th>Akcje</th>
-                    @endif
-                @endauth
-            </tr>
-        </thead>
+    <tr>
+        <th>
+            Nazwa Produktu 
+            <a href="{{ route('products.index', ['sort' => 'name', 'direction' => 'asc']) }}">⬆</a>
+            <a href="{{ route('products.index', ['sort' => 'name', 'direction' => 'desc']) }}">⬇</a>
+        </th>
+        <th>
+            Cena
+            <a href="{{ route('products.index', ['sort' => 'price', 'direction' => 'asc']) }}">⬆</a>
+            <a href="{{ route('products.index', ['sort' => 'price', 'direction' => 'desc']) }}">⬇</a>
+        </th>
+        <th>Kcal / 100g</th>
+        <th>Marka</th>
+        <th>Kategoria</th>
+        <th>Alergeny</th>
+        @auth
+            @if(Auth::user()->role === 'admin' || Auth::user()->role === 'employee')
+                <th>Akcje</th>
+            @endif
+        @endauth
+    </tr>
+</thead>
         <tbody>
             @foreach($products as $product)
                 {{-- Dodajemy link do szczegółów produktu po kliknięciu w wiersz (opcjonalne) --}}

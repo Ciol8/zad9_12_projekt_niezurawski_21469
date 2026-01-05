@@ -11,10 +11,29 @@ use Illuminate\Http\Request;
 class ProductController extends Controller
 {
     // Metoda publiczna (dostępna dla wszystkich w routes/web.php)
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with(['brand', 'category', 'allergens'])->paginate(20);
-        return view('products.index', compact('products'));
+        // Pobieramy parametry sortowania z URL, domyślnie 'name' i 'asc'
+        $sort = $request->input('sort', 'name');
+        $direction = $request->input('direction', 'asc');
+
+        // Dozwolone kolumny do sortowania (zabezpieczenie)
+        $allowedSorts = ['name', 'price'];
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'name';
+        }
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'asc';
+        }
+
+        $query = Product::with(['brand', 'category', 'allergens']);
+
+        // Sortowanie
+        $query->orderBy($sort, $direction);
+
+        $products = $query->paginate(20)->withQueryString(); // withQueryString utrzymuje parametry przy zmianie strony
+
+        return view('products.index', compact('products', 'sort', 'direction'));
     }
     public function show(Product $product)
     {

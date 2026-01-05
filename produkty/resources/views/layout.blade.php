@@ -196,6 +196,19 @@
 </head>
 
 <body>
+    <div style="text-align: right; margin-bottom: 10px;">
+    @auth
+        Witaj, {{ Auth::user()->name }} |
+        <form method="POST" action="{{ route('logout') }}" style="display:inline;">
+            @csrf
+            <button type="submit" style="background:none; border:none; color:blue; cursor:pointer; text-decoration:underline;">Wyloguj</button>
+        </form>
+    @else
+        <a href="{{ route('login') }}">Zaloguj</a>
+    @endauth
+    
+    | <a href="{{ route('cart.index') }}" style="font-weight: bold;">🛒 Twój Koszyk</a>
+</div>
     <div class="container">
         {{-- Flash messages --}}
         @if(session('success'))

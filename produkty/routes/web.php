@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,7 +14,11 @@ use Illuminate\Support\Facades\Route;
 // Strona główna - lista produktów (dostępna dla każdego)
 Route::get('/', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products', [ProductController::class, 'index']); // Alias
-
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+// ZMIEŃ/DODAJ w sekcji Koszyka:
+Route::post('/cart/add/{product}', [CartController::class, 'addToCart'])->name('cart.add'); // Zmiana na POST
+Route::patch('/cart/update/{id}', [CartController::class, 'updateCart'])->name('cart.update'); // Nowa trasa
+Route::get('/cart/remove/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
 // NA TO (dodaj where):
 Route::get('/products/{product}', [ProductController::class, 'show'])
     ->name('products.show')
@@ -25,7 +30,10 @@ Route::get('/products/{product}', [ProductController::class, 'show'])
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
-
+Route::post('/products/{product}/reviews', [App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
+Route::post('/checkout', [CartController::class, 'checkout'])
+    ->middleware('auth')
+    ->name('cart.checkout');
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
