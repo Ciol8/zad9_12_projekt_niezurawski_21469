@@ -2,14 +2,15 @@
 
 namespace Tests\Feature;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
+// 1. DODAJ TĘ LINIĘ:
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
-    /**
-     * A basic test example.
-     */
+    // 2. DODAJ TĘ LINIĘ WEWNĄTRZ KLASY:
+    use RefreshDatabase;
+
     public function test_the_application_returns_a_successful_response(): void
     {
         $response = $this->get('/');
