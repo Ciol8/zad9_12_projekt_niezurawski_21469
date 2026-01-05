@@ -10,8 +10,11 @@ class AdminUserController extends Controller
 {
     public function index()
     {
-        // Pobieramy wszystkich oprócz siebie samego (żeby admin nie usunął sobie konta przypadkiem)
-        $users = User::where('id', '!=', Auth::id())->orderBy('created_at', 'desc')->paginate(20);
+        // ZMIANA: Sortowanie po ID malejąco
+        $users = User::where('id', '!=', Auth::id())
+            ->orderBy('id', 'desc') // <--- Tutaj zmiana
+            ->paginate(20);
+
         return view('admin.users.index', compact('users'));
     }
 

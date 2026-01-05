@@ -13,27 +13,54 @@ class ProductController extends Controller
     // Metoda publiczna (dostępna dla wszystkich w routes/web.php)
     public function index(Request $request)
     {
-        // Pobieramy parametry sortowania z URL, domyślnie 'name' i 'asc'
+        // 1. Parametry sortowania
         $sort = $request->input('sort', 'name');
         $direction = $request->input('direction', 'asc');
 
-        // Dozwolone kolumny do sortowania (zabezpieczenie)
-        $allowedSorts = ['name', 'price'];
-        if (!in_array($sort, $allowedSorts)) {
+        // Rozszerzona lista dozwolonych kolumn (dodano kcal_per_100g)
+        $allowedSorts = ['name', 'price', 'kcal_per_100g'];
+
+        if (!in_array($sort, $allowedSorts))
             $sort = 'name';
-        }
-        if (!in_array($direction, ['asc', 'desc'])) {
+        if (!in_array($direction, ['asc', 'desc']))
             $direction = 'asc';
+
+        // 2. Parametry filtrowania
+        $selectedBrand = $request->input('brand_id');
+        $selectedCategory = $request->input('category_id');
+
+        // 3. Budowanie zapytania
+        $query = Product::with(['brand', 'category', 'allergens']);
+
+        // Filtrowanie po Marce
+        if ($selectedBrand) {
+            $query->where('brand_id', $selectedBrand);
         }
 
-        $query = Product::with(['brand', 'category', 'allergens']);
+        // Filtrowanie po Kategorii
+        if ($selectedCategory) {
+            $query->where('category_id', $selectedCategory);
+        }
 
         // Sortowanie
         $query->orderBy($sort, $direction);
 
-        $products = $query->paginate(20)->withQueryString(); // withQueryString utrzymuje parametry przy zmianie strony
+        // Pobranie wyników
+        $products = $query->paginate(20)->withQueryString();
 
-        return view('products.index', compact('products', 'sort', 'direction'));
+        // 4. Dane do filtrów (pobieramy wszystkie do selectów)
+        $brands = Brand::orderBy('name')->get();
+        $categories = Category::orderBy('name')->get();
+
+        return view('products.index', compact(
+            'products',
+            'brands',
+            'categories',
+            'sort',
+            'direction',
+            'selectedBrand',
+            'selectedCategory'
+        ));
     }
     public function show(Product $product)
     {

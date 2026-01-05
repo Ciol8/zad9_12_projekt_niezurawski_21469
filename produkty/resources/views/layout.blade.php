@@ -1,246 +1,353 @@
 <!DOCTYPE html>
 <html lang="pl">
-
 <head>
     <meta charset="UTF-8">
-    <title>Sklep Spożywczy - Win7 Aero</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sklep Dostępny - WCAG 2.1</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 40px;
-            min-height: 100vh;
-            background:
-                radial-gradient(circle at 50% 100%, rgba(5, 237, 255, 0.4) 0%, rgba(0, 163, 255, 0) 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 20%),
-                linear-gradient(135deg, #2660a5 0%, #0099cc 100%);
-            background-attachment: fixed;
-            color: #1e1e1e;
+        /* --- 1. ZMIENNE KOLORYSTYCZNE (Wysoki Kontrast) --- */
+        :root {
+            --bg-body: #f4f6f9;
+            --bg-container: #ffffff;
+            --text-main: #212529;       /* Prawie czarny dla kontrastu */
+            --text-muted: #6c757d;
+            --primary: #0056b3;         /* Ciemny niebieski (bezpieczny kontrast) */
+            --primary-hover: #004494;
+            --success: #198754;         /* Ciemny zielony */
+            --danger: #dc3545;
+            --warning: #ffc107;         /* Tekst na tym musi być czarny! */
+            --border: #dee2e6;
+            --focus-ring: #ffbf47;      /* Wyraźny żółty/pomarańczowy obrys dla klawiatury */
         }
 
+        /* --- 2. RESET I BAZA --- */
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            font-size: 16px; /* Bazowa wielkość czcionki */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- 3. DOSTĘPNOŚĆ (ACCESSIBILITY) --- */
+        
+        /* Skip Link - widoczny tylko po naciśnięciu TAB */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .skip-link:focus { top: 0; }
+
+        /* Wyraźny Focus dla nawigacji klawiaturą */
+        a:focus, button:focus, input:focus, select:focus, textarea:focus {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        /* --- 4. UKŁAD (LAYOUT) --- */
+        header {
+            background-color: #343a40; /* Ciemny nagłówek */
+            color: #fff;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
 
         .container {
-            max-width: 1100px;
+            width: 90%;
+            max-width: 1200px;
             margin: 0 auto;
-            background: rgba(240, 248, 255, 0.65);
-            backdrop-filter: blur(15px) saturate(120%);
-            -webkit-backdrop-filter: blur(15px) saturate(120%);
+            padding: 0 15px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; /* Responsywność */
+            gap: 15px;
+        }
+
+        main {
+            flex: 1; /* Wypycha stopkę na dół */
+            padding: 2rem 0;
+        }
+
+        .card {
+            background: var(--bg-container);
             padding: 25px;
-            border-radius: 12px;
-            box-shadow:
-                0 0 0 1px rgba(255, 255, 255, 0.5) inset,
-                0 15px 35px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            position: relative;
-            overflow: hidden;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        .container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 30px;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1));
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            pointer-events: none;
+        footer {
+            background: #e9ecef;
+            color: var(--text-main);
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: auto;
+            border-top: 1px solid var(--border);
         }
 
-        h1 {
-            font-weight: normal;
-            color: #1a3e6e;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-            margin-top: 10px;
-            font-size: 28px;
+        /* --- 5. NAWIGACJA --- */
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 15px;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 4px;
         }
+        nav a:hover {
+            background-color: rgba(255,255,255,0.2);
+            text-decoration: underline;
+        }
+
+        .nav-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* --- 6. ELEMENTY FORMULARZY I TABEL --- */
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            background-color: #e9ecef;
+            color: var(--text-main);
+            border: 1px solid #ced4da;
+        }
+        
+        .btn:hover { background-color: #dde0e3; }
+        .btn-primary { background-color: var(--primary); color: white; border: none; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-red { background-color: var(--danger); color: white; border: none; }
+        .btn-red:hover { background-color: #bb2d3b; }
 
         table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-top: 20px;
-            background: white;
-            border: 1px solid #aebfd1;
-            border-radius: 3px;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
         }
-
-        th {
-            background: linear-gradient(to bottom, #fcfcfc 0%, #f0f0f0 40%, #e2e2e2 100%);
-            border-bottom: 1px solid #aebfd1;
-            border-right: 1px solid #dcdcdc;
-            padding: 10px 15px;
+        
+        th, td {
+            padding: 12px;
             text-align: left;
-            color: #444;
-            font-size: 13px;
-            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: 700;
+            color: #495057;
         }
 
-        td {
-            padding: 10px 15px;
-            border-bottom: 1px solid #f0f0f0;
-            color: #333;
-            font-size: 14px;
+        /* Responsywne tabele (przewijanie na małych ekranach) */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:hover td {
-            background: #eaf6fd;
-            border-bottom-color: #b8d6fb;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 6px 16px;
-            text-decoration: none;
-            color: #1e1e1e;
-            font-size: 13px;
-            border: 1px solid #707070;
-            border-radius: 3px;
-            background: linear-gradient(to bottom, #f2f2f2 0%, #ebebeb 50%, #dddddd 50%, #cfcfcf 100%);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 1px 2px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: all 0.1s;
-        }
-
-        .btn:hover {
-            background: linear-gradient(to bottom, #eaf6fd 0%, #d9f0fc 50%, #bee6fd 50%, #a7d9f5 100%);
-            border-color: #3c7fb1;
-            box-shadow: inset 0 0 2px rgba(255, 255, 255, 1), 0 1px 2px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn:active {
-            background: linear-gradient(to bottom, #a7d9f5 0%, #bee6fd 100%);
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-red {
-            color: #7a1e1e;
-        }
-
-        .btn-red:hover {
-            background: linear-gradient(to bottom, #fdeae9 0%, #fbd5d2 50%, #f7b7b2 50%, #f29a92 100%);
-            border-color: #b13c3c;
-        }
-
-        /* --- FORMULARZE --- */
-        .form-group {
-            margin-bottom: 15px;
-        }
-
+        .form-group { margin-bottom: 1rem; }
+        
         label {
             display: block;
-            margin-bottom: 5px;
-            color: #333;
+            margin-bottom: 0.5rem;
             font-weight: 600;
+            color: var(--text-main);
         }
 
-        input[type="text"],
-        input[type="number"],
-        select {
+        input[type="text"], input[type="number"], input[type="email"], input[type="password"], select, textarea {
             width: 100%;
-            padding: 6px;
-            border: 1px solid #abadb3;
-            border-radius: 2px;
-            font-family: 'Segoe UI', sans-serif;
-            background: #fff;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: #3399ff;
-            box-shadow: 0 0 0 2px rgba(51, 153, 255, 0.3);
-        }
-
-        .checkbox-container {
-            background: white;
-            border: 1px solid #abadb3;
-            padding: 10px;
-            border-radius: 2px;
-            max-height: 200px;
-            overflow-y: auto;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        .alert {
-            background: rgba(223, 240, 216, 0.9);
-            border: 1px solid #b2dba1;
-            color: #3c763d;
-            padding: 15px;
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 1px solid #ced4da;
             border-radius: 4px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            backdrop-filter: blur(5px);
+            background-color: #fff;
         }
 
-        .pagination {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
+        /* --- 7. UTILITIES --- */
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            border: 1px solid transparent;
         }
+        .alert-success { background-color: #d1e7dd; border-color: #badbcc; color: #0f5132; }
+        .alert-error { background-color: #f8d7da; border-color: #f5c2c7; color: #842029; }
 
-
-        .w-5 {
-            width: 1.25rem;
+        .pagination { display: flex; justify-content: center; gap: 5px; margin-top: 20px; }
+        /* Style dla domyślnej paginacji Laravela */
+        .pagination li { list-style: none; }
+        .pagination span, .pagination a {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            text-decoration: none;
+            color: var(--primary);
         }
+        .pagination .active span {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        /* Ukrycie SVG w paginacji jeśli są */
+        .w-5 { width: 1em; }
 
-        .h-5 {
-            height: 1.25rem;
+        /* --- 8. MEDIA QUERIES (RESPONSYWNOŚĆ) --- */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            nav {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            nav a { margin: 0; display: block; background: rgba(255,255,255,0.1); }
+            
+            /* Tabele na mobilce */
+            table, thead, tbody, th, td, tr { 
+                display: block; 
+            }
+            thead tr { 
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            tr { margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; overflow: hidden; }
+            td { 
+                border: none;
+                border-bottom: 1px solid #eee; 
+                position: relative;
+                padding-left: 50%; 
+            }
+            td:before { 
+                position: absolute;
+                top: 12px;
+                left: 10px;
+                width: 45%; 
+                padding-right: 10px; 
+                white-space: nowrap;
+                font-weight: bold;
+                content: attr(data-label); /* Ważne dla dostępności tabel mobilnych */
+            }
+        }
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
     </style>
 </head>
-
 <body>
-    <nav style="background: #333; color: white; padding: 10px; margin-bottom: 20px;">
-    <div class="container" style="display: flex; justify-content: space-between; align-items: center; background: none; box-shadow: none; border: none; color: white;">
-        
-        <div>
-            <a href="{{ route('products.index') }}" style="color: white; text-decoration: none; font-weight: bold; margin-right: 15px;">SKLEP</a>
-            
-            @auth
-                {{-- Linki dla Pracownika i Admina --}}
-                @if(Auth::user()->role === 'admin' || Auth::user()->role === 'employee')
-                    <a href="{{ route('admin.orders.index') }}" style="color: #ffc107; margin-right: 15px;">[Panel Zamówień]</a>
-                @endif
+    <a href="#main-content" class="skip-link">Przejdź bezpośrednio do treści</a>
 
-                {{-- Linki tylko dla Admina --}}
-                @if(Auth::user()->role === 'admin')
-                    <a href="{{ route('admin.users.index') }}" style="color: #ff9999; margin-right: 15px;">[Użytkownicy]</a>
-                @endif
-            @endauth
-        </div>
-
-        <div>
-            {{-- Prawa strona: Koszyk i Konto --}}
-            <a href="{{ route('cart.index') }}" style="color: white; margin-right: 15px;">🛒 Koszyk</a>
-            
-            @auth
-                <span>{{ Auth::user()->name }} ({{ Auth::user()->role }})</span>
-                <form method="POST" action="{{ route('logout') }}" style="display:inline; margin-left: 10px;">
-                    @csrf
-                    <button type="submit" style="background: #555; color: white; border: none; padding: 5px 10px; cursor: pointer;">Wyloguj</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" style="color: white;">Zaloguj</a>
-            @endauth
-        </div>
-    </div>
-</nav>
-    <div class="container">
-        {{-- Flash messages --}}
-        @if(session('success'))
-            <div class="alert">
-                {{ session('success') }}
+    <header>
+        <div class="container header-content">
+            <div style="font-size: 1.5rem; font-weight: bold;">
+                <a href="{{ route('products.index') }}" style="color: white; text-decoration: none;">
+                    Sklep Spożywczy
+                </a>
             </div>
-        @endif
 
-        @yield('content')
-    </div>
+            <nav aria-label="Główna nawigacja">
+                <div class="nav-group">
+                    <a href="{{ route('products.index') }}">Produkty</a>
+                    
+                    @auth
+                        @if(Auth::user()->role === 'admin' || Auth::user()->role === 'employee')
+                            <a href="{{ route('admin.orders.index') }}" style="color: #ffc107;">Zamówienia</a>
+                        @endif
+                        @if(Auth::user()->role === 'admin')
+                            <a href="{{ route('admin.users.index') }}" style="color: #ff9999;">Użytkownicy</a>
+                        @endif
+                    @endauth
+                </div>
+
+                <div class="nav-group" style="margin-left: 20px; border-left: 1px solid #555; padding-left: 20px;">
+                    <a href="{{ route('cart.index') }}" aria-label="Przejdź do koszyka">
+                        🛒 Koszyk 
+                        @if(session('cart')) 
+                            <span style="background: var(--warning); color: black; padding: 2px 6px; border-radius: 10px; font-size: 0.8em; font-weight: bold;">
+                                {{ array_sum(session('cart')) }}
+                            </span>
+                        @endif
+                    </a>
+
+                    @auth
+                        <span style="color: #ccc; font-size: 0.9em; margin-left: 10px;">
+                            {{ Auth::user()->name }}
+                        </span>
+                        {{-- Formularz wylogowania - używamy tylko <input type="hidden" name="_token" value="{{ csrf_token() }}"> --}}
+                        <form method="POST" action="{{ route('logout') }}" style="display:inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn" style="background: none; border: none; color: #adb5bd; padding: 5px 10px; font-size: 0.9em; text-decoration: underline;">
+                                Wyloguj
+                            </button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="btn btn-primary" style="padding: 5px 15px; font-size: 0.9em; margin-left: 10px;">Zaloguj</a>
+                    @endauth
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <div class="container">
+            <div class="card">
+                @if(session('success'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('success') }}
+                    </div>
+                @endif
+                
+                @if(session('error'))
+                    <div class="alert alert-error" role="alert">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
+                @yield('content')
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; {{ date('Y') }} Sklep Spożywczy. Aplikacja dostępna cyfrowo (WCAG 2.1).</p>
+        </div>
+    </footer>
 </body>
-
 </html>

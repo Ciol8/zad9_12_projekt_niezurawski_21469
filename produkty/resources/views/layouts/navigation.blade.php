@@ -40,7 +40,7 @@
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
-                            @csrf
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
                             <x-dropdown-link :href="route('logout')"
                                     onclick="event.preventDefault();
@@ -86,7 +86,7 @@
 
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
-                    @csrf
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
                     <x-responsive-nav-link :href="route('logout')"
                             onclick="event.preventDefault();

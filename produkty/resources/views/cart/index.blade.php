@@ -7,76 +7,84 @@
     </div>
 
     @if(count($products) > 0)
-        <table>
-            <thead>
-                <tr>
-                    <th>Produkt</th>
-                    <th>Cena jedn.</th>
-                    <th>Ilość</th>
-                    <th>Suma</th>
-                    <th>Akcje</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($products as $product)
-                <tr>
-                    <td>{{ $product->name }}</td>
-                    <td>{{ number_format($product->price, 2) }} PLN</td>
-                    <td>
-                        {{-- Formularz zmiany ilości --}}
-                        <form action="{{ route('cart.update', $product->id) }}" method="POST" style="display:flex; gap:5px;">
-                            @csrf
-                            @method('PATCH')
-                            <input type="number" name="quantity" value="{{ $product->quantity }}" min="1" style="width: 50px;">
-                            <button type="submit" class="btn" style="font-size: 0.8em;">↻</button>
-                        </form>
-                    </td>
-                    <td>{{ number_format($product->subtotal, 2) }} PLN</td>
-                    <td>
-                        <a href="{{ route('cart.remove', $product->id) }}" class="btn btn-red">Usuń</a>
-                    </td>
-                </tr>
-                @endforeach
-                <tr style="font-weight: bold; background-color: #f8f9fa;">
-                    <td colspan="3" style="text-align: right;">ŁĄCZNIE:</td>
-                    <td colspan="2" style="font-size: 1.2em; color: #28a745;">{{ number_format($totalSum, 2) }} PLN</td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produkt</th>
+                        <th>Cena jedn.</th>
+                        <th>Ilość</th>
+                        <th>Suma</th>
+                        <th>Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($products as $product)
+                    <tr>
+                        <td data-label="Produkt">{{ $product->name }}</td>
+                        <td data-label="Cena jedn.">{{ number_format($product->price, 2) }} PLN</td>
+                        <td data-label="Ilość">
+                            <form action="{{ route('cart.update', $product->id) }}" method="POST" style="display:flex; gap:5px; align-items: center;">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                @method('PATCH')
+                                <label for="quantity-{{$product->id}}" class="visually-hidden">Ilość</label>
+                                <input type="number" id="quantity-{{$product->id}}" name="quantity" value="{{ $product->quantity }}" min="1" style="width: 60px;">
+                                <button type="submit" class="btn" style="font-size: 0.8em; padding: 4px 8px;">↻</button>
+                            </form>
+                        </td>
+                        <td data-label="Suma">{{ number_format($product->subtotal, 2) }} PLN</td>
+                        <td data-label="Akcje">
+                            <a href="{{ route('cart.remove', $product->id) }}" class="btn btn-red" style="font-size: 0.8em;">Usuń</a>
+                        </td>
+                    </tr>
+                    @endforeach
+                    <tr style="font-weight: bold; background-color: #f8f9fa;">
+                        <td colspan="3" data-label="Podsumowanie" style="text-align: right;">ŁĄCZNIE:</td>
+                        <td colspan="2" data-label="Do zapłaty" style="font-size: 1.2em; color: #198754;">{{ number_format($totalSum, 2) }} PLN</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-        <div style="margin-top: 30px; padding: 20px; border: 1px solid #ddd;">
-            <h3>Dane do wysyłki</h3>
+        <div style="margin-top: 30px; padding: 20px; border: 1px solid #dee2e6; border-radius: 8px;">
+            {{-- H2: Naprawa hierarchii --}}
+            <h2>Dane do wysyłki</h2>
             @auth
                 <form action="{{ route('cart.checkout') }}" method="POST">
-                    @csrf
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 15px;">
                         <div class="form-group">
-                            <label>Ulica i numer:</label>
-                            <input type="text" name="street" required class="form-control">
+                            <label for="street">Ulica i numer:</label>
+                            <input type="text" id="street" name="street" required>
                         </div>
                         <div class="form-group">
-                            <label>Kod pocztowy:</label>
-                            <input type="text" name="zip" required class="form-control">
+                            <label for="zip">Kod pocztowy:</label>
+                            <input type="text" id="zip" name="zip" required>
                         </div>
                         <div class="form-group">
-                            <label>Miejscowość:</label>
-                            <input type="text" name="city" required class="form-control">
+                            <label for="city">Miejscowość:</label>
+                            <input type="text" id="city" name="city" required>
                         </div>
                         <div class="form-group">
-                            <label>Telefon:</label>
-                            <input type="text" name="phone" required class="form-control">
+                            <label for="phone">Telefon:</label>
+                            <input type="text" id="phone" name="phone" required>
                         </div>
                     </div>
-                    <button type="submit" class="btn" style="background: #28a745; color: white; margin-top: 20px; width: 100%;">
-                        Złóż zamówienie
+                    <button type="submit" class="btn btn-primary" style="margin-top: 20px; width: 100%;">
+                        Złóż zamówienie (Zobowiązanie do zapłaty)
                     </button>
                 </form>
             @else
-                <p>Zaloguj się, aby zamówić.</p>
+                <div class="alert alert-warning">
+                    <p>Musisz być zalogowany, aby złożyć zamówienie.</p>
+                    <a href="{{ route('login') }}" class="btn">Zaloguj się</a>
+                </div>
             @endauth
         </div>
     @else
-        <p>Koszyk jest pusty.</p>
-        <a href="{{ route('products.index') }}" class="btn">Idź na zakupy</a>
+        <div style="text-align: center; padding: 40px;">
+            <h2>Koszyk jest pusty.</h2>
+            <a href="{{ route('products.index') }}" class="btn btn-primary">Idź na zakupy</a>
+        </div>
     @endif
 @endsection

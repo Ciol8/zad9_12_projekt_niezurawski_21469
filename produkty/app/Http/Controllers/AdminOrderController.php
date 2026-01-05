@@ -10,8 +10,10 @@ class AdminOrderController extends Controller
 {
     public function index(Request $request)
     {
-        // Pobieramy zamówienia z relacjami (użytkownik i status), sortujemy od najnowszych
-        $orders = Order::with(['user', 'status'])->latest()->paginate(20);
+        // ZMIANA: Sortowanie po ID malejąco
+        $orders = Order::with(['user', 'status'])
+            ->orderBy('id', 'desc') // <--- Tutaj zmiana zamiast latest()
+            ->paginate(20);
 
         return view('admin.orders.index', compact('orders'));
     }

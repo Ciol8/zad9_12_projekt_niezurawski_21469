@@ -32,4 +32,16 @@ class ReviewController extends Controller
 
         return redirect()->back()->with('success', 'Opinia dodana!');
     }
+    // Metoda do usuwania opinii (dla Admina i Pracownika)
+    public function destroy(Review $review)
+    {
+        // Sprawdzenie uprawnień dla pewności (choć Route middleware to załatwi)
+        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'employee') {
+            abort(403, 'Brak uprawnień.');
+        }
+
+        $review->delete();
+
+        return redirect()->back()->with('success', 'Opinia została usunięta.');
+    }
 }

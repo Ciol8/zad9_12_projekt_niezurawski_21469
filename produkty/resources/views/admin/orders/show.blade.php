@@ -10,7 +10,7 @@
 
         {{-- Lewa kolumna: Produkty --}}
         <div style="background: white; padding: 20px; border: 1px solid #ddd;">
-            <h3>Produkty</h3>
+            <h2>Produkty</h2>
             <table>
                 <thead>
                     <tr>
@@ -51,7 +51,7 @@
                 <h3 style="color: #155724;">Zarządzanie Statusem</h3>
 
                 <form action="{{ route('admin.orders.updateStatus', $order) }}" method="POST">
-                    @csrf
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     @method('PATCH')
 
                     <div class="form-group">
