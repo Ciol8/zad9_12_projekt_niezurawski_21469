@@ -89,17 +89,20 @@
                         <td data-label="Cena">{{ number_format($product->price, 2) }} PLN</td>
                         <td data-label="Kcal">{{ $product->kcal_per_100g }}</td>
                         <td data-label="Marka">
-                            {{ $product->brand->name }} 
-                            <small style="color: gray;">({{ $product->brand->country_of_origin }})</small>
-                        </td>
+    {{ $product->brand->name }} 
+    {{-- ZMIANA: Kolor ciemny (wysoki kontrast) zamiast szarego --}}
+    <small style="color: #212529; font-weight: 600;">
+        ({{ $product->brand->country_of_origin }})
+    </small>
+</td>
                         <td data-label="Kategoria">{{ $product->category->name }}</td>
                         <td data-label="Alergeny">
                             @foreach($product->allergens as $allergen)
                                 @php
-                                    $color = '#6c757d'; 
+                                    $color = '#000000ff'; 
                                     $textColor = 'white';
                                     switch ($allergen->severity) {
-                                        case 'low': $color = '#28a745'; break;
+                                        case 'low': $color = '#28a745'; $textColor = 'black';break;
                                         case 'medium': $color = '#ffc107'; $textColor = 'black'; break;
                                         case 'high': $color = '#dc3545'; break;
                                         case 'deadly': $color = '#800080'; break;

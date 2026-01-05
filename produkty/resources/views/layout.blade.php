@@ -283,7 +283,7 @@
 
             <nav aria-label="Główna nawigacja">
                 <div class="nav-group">
-                    <a href="{{ route('products.index') }}">Produkty</a>
+                    
                     
                     @auth
                         @if(Auth::user()->role === 'admin' || Auth::user()->role === 'employee')
