@@ -3,270 +3,307 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sklep Dostępny - WCAG 2.1</title>
+    <title>Jedzonko na zamówienie c:</title>
+    
+    {{-- 1. Import nowoczesnej czcionki 'Inter' z Google Fonts --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        /* --- 1. ZMIENNE KOLORYSTYCZNE (Wysoki Kontrast) --- */
+        /* --- ZMIENNE KOLORYSTYCZNE (Nowoczesna Paleta + WCAG) --- */
         :root {
-            --bg-body: #f4f6f9;
-            --bg-container: #ffffff;
-            --text-main: #212529;       /* Prawie czarny dla kontrastu */
-            --text-muted: #6c757d;
-            --primary: #0056b3;         /* Ciemny niebieski (bezpieczny kontrast) */
-            --primary-hover: #004494;
-            --success: #198754;         /* Ciemny zielony */
-            --danger: #dc3545;
-            --warning: #ffc107;         /* Tekst na tym musi być czarny! */
-            --border: #dee2e6;
-            --focus-ring: #ffbf47;      /* Wyraźny żółty/pomarańczowy obrys dla klawiatury */
+            --bg-body: #f3f4f6;         /* Bardzo jasny szary (nie czysta biel) - mniej męczy oczy */
+            --bg-card: #ffffff;
+            --text-main: #1f2937;       /* Ciemny grafit zamiast czystej czerni (bardziej elegancki) */
+            --text-muted: #6b7280;      /* Szary dla opisów */
+            
+            /* Kolory Akcji */
+            --primary: #2563eb;         /* Nowoczesny niebieski (Royal Blue) */
+            --primary-hover: #1d4ed8;
+            --success: #059669;         /* Głęboka zieleń */
+            --danger: #dc2626;          /* Czerwień */
+            --warning: #fbbf24;         /* Żółty/Złoty */
+            
+            /* Obramowania i Cienie */
+            --border: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 8px;              /* Zaokrąglenie rogów */
+            --focus-ring: #60a5fa;      /* Kolor obwódki przy nawigacji klawiaturą */
         }
 
-        /* --- 2. RESET I BAZA --- */
+        /* --- BAZA --- */
         * { box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif; /* Nowa czcionka */
             background-color: var(--bg-body);
             color: var(--text-main);
+            margin: 0;
+            padding: 0;
             line-height: 1.6;
-            font-size: 16px; /* Bazowa wielkość czcionki */
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
         }
 
-        /* --- 3. DOSTĘPNOŚĆ (ACCESSIBILITY) --- */
-        
-        /* Skip Link - widoczny tylko po naciśnięciu TAB */
+        /* --- DOSTĘPNOŚĆ (Skip Link & Focus) --- */
         .skip-link {
             position: absolute;
-            top: -40px;
-            left: 0;
+            top: -50px; left: 0;
             background: var(--primary);
             color: white;
-            padding: 8px;
+            padding: 10px 15px;
             z-index: 100;
             transition: top 0.3s;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 600;
+            border-radius: 0 0 8px 0;
         }
         .skip-link:focus { top: 0; }
 
-        /* Wyraźny Focus dla nawigacji klawiaturą */
-        a:focus, button:focus, input:focus, select:focus, textarea:focus {
-            outline: 3px solid var(--primary);
+        /* Wyraźny Focus Ring (kluczowy dla dostępności) */
+        :focus-visible {
+            outline: 3px solid var(--focus-ring);
             outline-offset: 2px;
         }
-
-        /* --- 4. UKŁAD (LAYOUT) --- */
-        header {
-            background-color: #343a40; /* Ciemny nagłówek */
-            color: #fff;
-            padding: 1rem 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        
+        /* Ukrywanie labeli dla screen readerów */
+        .visually-hidden {
+            position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
         }
 
+        /* --- UKŁAD (LAYOUT) --- */
         .container {
-            width: 90%;
+            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 15px;
+            padding: 0 20px;
+        }
+
+        /* --- NAGŁÓWEK (HEADER) --- */
+        header {
+            background-color: #111827; /* Bardzo ciemny granat/czarny */
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 50;
         }
 
         .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap; /* Responsywność */
-            gap: 15px;
         }
 
-        main {
-            flex: 1; /* Wypycha stopkę na dół */
-            padding: 2rem 0;
-        }
-
-        .card {
-            background: var(--bg-container);
-            padding: 25px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        footer {
-            background: #e9ecef;
-            color: var(--text-main);
-            text-align: center;
-            padding: 1.5rem 0;
-            margin-top: auto;
-            border-top: 1px solid var(--border);
-        }
-
-        /* --- 5. NAWIGACJA --- */
-        nav a {
-            color: #fff;
-            text-decoration: none;
-            margin-left: 15px;
-            font-weight: 500;
-            padding: 5px 10px;
-            border-radius: 4px;
-        }
-        nav a:hover {
-            background-color: rgba(255,255,255,0.2);
-            text-decoration: underline;
-        }
-
-        .nav-group {
-            display: inline-flex;
+        nav {
+            display: flex;
+            gap: 20px;
             align-items: center;
-            gap: 10px;
         }
 
-        /* --- 6. ELEMENTY FORMULARZY I TABEL --- */
-        .btn {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            font-size: 1rem;
-            font-weight: 600;
+        nav a {
+            color: #e5e7eb;
             text-decoration: none;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            background-color: #e9ecef;
-            color: var(--text-main);
-            border: 1px solid #ced4da;
+            font-weight: 500;
+            transition: color 0.2s;
+            font-size: 0.95rem;
         }
-        
-        .btn:hover { background-color: #dde0e3; }
-        .btn-primary { background-color: var(--primary); color: white; border: none; }
-        .btn-primary:hover { background-color: var(--primary-hover); }
-        .btn-red { background-color: var(--danger); color: white; border: none; }
-        .btn-red:hover { background-color: #bb2d3b; }
+        nav a:hover { color: white; text-decoration: underline; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-        }
-        
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        th {
-            background-color: #f8f9fa;
-            font-weight: 700;
-            color: #495057;
+        /* --- TREŚĆ (MAIN) --- */
+        main {
+            flex: 1;
+            padding: 40px 0; /* Więcej oddechu góra/dół */
         }
 
-        /* Responsywne tabele (przewijanie na małych ekranach) */
-        .table-responsive {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+        /* Karta (Kontener treści) - Klucz do ładnego wyglądu */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md); /* Miękki cień zamiast grubej ramki */
+            border: 1px solid var(--border); /* Cienka ramka dla kontrastu */
+            padding: 30px;
+            margin-bottom: 20px;
         }
 
-        .form-group { margin-bottom: 1rem; }
+        h1, h2, h3 {
+            color: #111827;
+            margin-top: 0;
+            line-height: 1.2;
+        }
+        h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 1.5rem; }
+        h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; border-bottom: 2px solid var(--bg-body); padding-bottom: 10px; }
+
+        /* --- FORMULARZE I PRZYCISKI --- */
+        .form-group { margin-bottom: 1.2rem; }
         
         label {
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 600;
-            color: var(--text-main);
+            color: #374151;
+            font-size: 0.9rem;
         }
 
-        input[type="text"], input[type="number"], input[type="email"], input[type="password"], select, textarea {
+        input, select, textarea {
             width: 100%;
-            padding: 0.75rem;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px; /* Lekkie zaokrąglenie */
             font-size: 1rem;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            background-color: #fff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: inherit;
         }
 
-        /* --- 7. UTILITIES --- */
-        .alert {
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 4px;
-            border: 1px solid transparent;
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); /* Delikatna poświata */
+            outline: none;
         }
-        .alert-success { background-color: #d1e7dd; border-color: #badbcc; color: #0f5132; }
-        .alert-error { background-color: #f8d7da; border-color: #f5c2c7; color: #842029; }
 
-        .pagination { display: flex; justify-content: center; gap: 5px; margin-top: 20px; }
-        /* Style dla domyślnej paginacji Laravela */
-        .pagination li { list-style: none; }
-        .pagination span, .pagination a {
-            padding: 8px 12px;
-            border: 1px solid var(--border);
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            font-weight: 600;
+            border-radius: 6px;
             text-decoration: none;
-            color: var(--primary);
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            gap: 8px; /* Odstęp jeśli w przycisku jest ikona */
+        }
+
+        .btn:hover { transform: translateY(-1px); } /* Mikro-interakcja */
+        .btn:active { transform: translateY(0); }
+
+        .btn-default { background: white; border-color: #d1d5db; color: #374151; }
+        .btn-default:hover { background: #f9fafb; border-color: #9ca3af; }
+
+        .btn-primary { background-color: var(--primary); color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .btn-primary:hover { background-color: var(--primary-hover); box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+
+        .btn-red { background-color: white; color: var(--danger); border: 1px solid var(--danger); }
+        .btn-red:hover { background-color: #fef2f2; }
+
+        /* --- TABELE --- */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background-color: #f9fafb;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            color: #6b7280;
+            font-weight: 700;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            color: #374151;
+            font-size: 0.95rem;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background-color: #f9fafb; } /* Podświetlenie wiersza */
+
+        /* --- ALERTY --- */
+        .alert {
+            padding: 15px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            border-left: 4px solid transparent;
+            font-weight: 500;
+        }
+        .alert-success { background-color: #ecfdf5; color: #065f46; border-left-color: var(--success); }
+        .alert-error { background-color: #fef2f2; color: #991b1b; border-left-color: var(--danger); }
+        .alert-warning { background-color: #fffbeb; color: #92400e; border-left-color: var(--warning); }
+
+        /* --- PAGINACJA --- */
+        .pagination { display: flex; justify-content: center; margin-top: 2rem; }
+        .pagination span, .pagination a {
+            padding: 8px 14px;
+            border: 1px solid var(--border);
+            margin: 0 4px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #374151;
+            background: white;
         }
         .pagination .active span {
             background-color: var(--primary);
             color: white;
             border-color: var(--primary);
         }
-        /* Ukrycie SVG w paginacji jeśli są */
-        .w-5 { width: 1em; }
 
-        /* --- 8. MEDIA QUERIES (RESPONSYWNOŚĆ) --- */
+        /* --- RESPONSYWNOŚĆ (Mobile) --- */
         @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            nav {
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-                text-align: center;
-            }
-            nav a { margin: 0; display: block; background: rgba(255,255,255,0.1); }
+            .header-content { flex-direction: column; gap: 15px; }
+            nav { flex-direction: column; gap: 10px; width: 100%; text-align: center; }
             
-            /* Tabele na mobilce */
-            table, thead, tbody, th, td, tr { 
-                display: block; 
+            /* Karty tabeli na mobile */
+            table, thead, tbody, th, td, tr { display: block; }
+            thead tr { position: absolute; top: -9999px; left: -9999px; }
+            tr { 
+                margin-bottom: 15px; 
+                border: 1px solid var(--border); 
+                border-radius: var(--radius); 
+                box-shadow: var(--shadow-sm);
+                overflow: hidden;
             }
-            thead tr { 
-                position: absolute;
-                top: -9999px;
-                left: -9999px;
-            }
-            tr { margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; overflow: hidden; }
             td { 
                 border: none;
-                border-bottom: 1px solid #eee; 
+                border-bottom: 1px solid #f3f4f6; 
                 position: relative;
-                padding-left: 50%; 
+                padding-left: 40%; 
+                text-align: right;
             }
             td:before { 
                 position: absolute;
-                top: 12px;
-                left: 10px;
-                width: 45%; 
+                top: 16px; left: 16px;
+                width: 35%; 
                 padding-right: 10px; 
                 white-space: nowrap;
-                font-weight: bold;
-                content: attr(data-label); /* Ważne dla dostępności tabel mobilnych */
+                text-align: left;
+                font-weight: 700;
+                color: #6b7280;
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                content: attr(data-label); 
             }
+            td:last-child { border-bottom: none; }
         }
-        .visually-hidden {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
+
+        /* --- STOPKA --- */
+        footer {
+            margin-top: auto;
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 20px 0;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -275,49 +312,42 @@
 
     <header>
         <div class="container header-content">
-            <div style="font-size: 1.5rem; font-weight: bold;">
-                <a href="{{ route('products.index') }}" style="color: white; text-decoration: none;">
-                    Sklep Spożywczy
+            <div style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.025em;">
+                <a href="{{ route('products.index') }}" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 10px;">
+                    🛒 Jedzonko na zamówienie c:
                 </a>
             </div>
 
             <nav aria-label="Główna nawigacja">
-                <div class="nav-group">
-                    
-                    
-                    @auth
-                        @if(Auth::user()->role === 'admin' || Auth::user()->role === 'employee')
-                            <a href="{{ route('admin.orders.index') }}" style="color: #ffc107;">Zamówienia</a>
-                        @endif
-                        @if(Auth::user()->role === 'admin')
-                            <a href="{{ route('admin.users.index') }}" style="color: #ff9999;">Użytkownicy</a>
-                        @endif
-                    @endauth
-                </div>
+                <a href="{{ route('products.index') }}">Produkty</a>
+                
+                @auth
+                    @if(Auth::user()->role === 'admin' || Auth::user()->role === 'employee')
+                        <a href="{{ route('admin.orders.index') }}" style="color: #fbbf24;">Zamówienia</a>
+                    @endif
+                    @if(Auth::user()->role === 'admin')
+                        <a href="{{ route('admin.users.index') }}" style="color: #fca5a5;">Użytkownicy</a>
+                    @endif
+                @endauth
 
-                <div class="nav-group" style="margin-left: 20px; border-left: 1px solid #555; padding-left: 20px;">
-                    <a href="{{ route('cart.index') }}" aria-label="Przejdź do koszyka">
-                        🛒 Koszyk 
+                <div style="display: flex; align-items: center; gap: 15px; margin-left: 10px; padding-left: 20px; border-left: 1px solid #374151;">
+                    <a href="{{ route('cart.index') }}" aria-label="Koszyk" style="position: relative;">
+                        Koszyk
                         @if(session('cart')) 
-                            <span style="background: var(--warning); color: black; padding: 2px 6px; border-radius: 10px; font-size: 0.8em; font-weight: bold;">
+                            <span style="position: absolute; top: -8px; right: -12px; background: var(--warning); color: #1f2937; padding: 1px 6px; border-radius: 10px; font-size: 0.7em; font-weight: 800;">
                                 {{ array_sum(session('cart')) }}
                             </span>
                         @endif
                     </a>
 
                     @auth
-                        <span style="color: #ccc; font-size: 0.9em; margin-left: 10px;">
-                            {{ Auth::user()->name }}
-                        </span>
-                        {{-- Formularz wylogowania - używamy tylko <input type="hidden" name="_token" value="{{ csrf_token() }}"> --}}
+                        <span style="font-size: 0.85rem; color: #9ca3af;">{{ Auth::user()->name }}</span>
                         <form method="POST" action="{{ route('logout') }}" style="display:inline;">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <button type="submit" class="btn" style="background: none; border: none; color: #adb5bd; padding: 5px 10px; font-size: 0.9em; text-decoration: underline;">
-                                Wyloguj
-                            </button>
+                            <button type="submit" style="background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 0.85rem; font-weight: 500; padding: 0;">Wyloguj</button>
                         </form>
                     @else
-                        <a href="{{ route('login') }}" class="btn btn-primary" style="padding: 5px 15px; font-size: 0.9em; margin-left: 10px;">Zaloguj</a>
+                        <a href="{{ route('login') }}" style="background: white; color: #111827; padding: 6px 14px; border-radius: 6px; font-size: 0.85rem;">Zaloguj</a>
                     @endauth
                 </div>
             </nav>
@@ -346,7 +376,7 @@
 
     <footer>
         <div class="container">
-            <p>&copy; {{ date('Y') }} Sklep Spożywczy. Aplikacja dostępna cyfrowo (WCAG 2.1).</p>
+            <p>&copy; {{ date('Y') }} Jedzonko na zamówienie c: <br> Aplikacja zgodna z WCAG 2.1 AA.</p>
         </div>
     </footer>
 </body>
